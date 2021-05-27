@@ -51,5 +51,40 @@ namespace BankProject.Tests
             b.UjSzamla("Teszt Elek", "1234");
             Assert.DoesNotThrow(() => b.EgyenlegFeltolt("1234", 10000));
         }
+
+        [TestCase]
+        public void UjSzamlaEgyenlege0()
+        {
+            b.UjSzamla("Teszt Elek", "1234");
+            Assert.AreEqual(0, b.Egyenleg("1234"));
+        }
+
+        [TestCase]
+        public void EgyenlegNemLetezoSzamlaraEgyenleg()
+        {
+            b.UjSzamla("Teszt Elek", "1234");
+            Assert.Throws<HibasSzamlaszamException>(() => b.Egyenleg("4321"));
+        }
+
+        [TestCase]
+        public void FeltoltesSikerult()
+        {
+            b.UjSzamla("Teszt Elek", "1234");
+            Assert.AreEqual(0, b.Egyenleg("1234"));
+            b.EgyenlegFeltolt("1234", 10000);
+            Assert.AreEqual(10000, b.Egyenleg("1234"));
+        }
+
+        [TestCase]
+        public void EgyenlegFeltoltMegfeleloSzamlaraMegy()
+        {
+            b.UjSzamla("Teszt Elek", "1234");
+            b.UjSzamla("Nagy Árpád", "5678");
+            Assert.AreEqual(0, b.Egyenleg("1234"));
+            Assert.AreEqual(0, b.Egyenleg("5678"));
+            b.EgyenlegFeltolt("1234", 10000);
+            Assert.AreEqual(10000, b.Egyenleg("1234"));
+            Assert.AreEqual(0, b.Egyenleg("5678"));
+        }
     }
 }
